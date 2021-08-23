@@ -1,0 +1,27 @@
+{
+  "name": "r7rs",
+  "version": "0.0.1",
+  "description": "a Scheme-to-JS compiler",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --outfile=build/index.js --target=es2016",
+    "demo": "esbuild demo/index.ts --bundle --outfile=demo/index.js --target=es2016"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eagr/r7rs.git"
+  },
+  "keywords": [
+    "scheme",
+    "js",
+    "compiler"
+  ],
+  "author": "eagr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eagr/r7rs/issues"
+  },
+  "homepage": "https://github.com/eagr/r7rs",
+  "devDependencies": {
+    "esbuild": "^0.12.28"
+  }
+}

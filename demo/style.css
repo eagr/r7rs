@@ -1,0 +1,20 @@
+.wrapper {
+    display: flex;
+}
+
+#editor {
+    width: 33%;
+    height: 1024px;
+    margin: 0;
+}
+
+#result, #output {
+    width: 33%;
+    height: 1024px;
+    border: 1px solid #000;
+    margin: 0;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    overflow-x: scroll;
+}
