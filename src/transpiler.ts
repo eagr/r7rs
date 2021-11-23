@@ -1,12 +1,15 @@
 import { SchemeToken, SchemeTransResult, SchemeTranspiler } from './interface'
-import { T_BOOL, T_CHAR, T_NUM, T_STR, T_IDENT, T_QUOTE, STD_PROC, ENV } from './const'
-import { stdproc } from './scheme'
+import { T_BOOL, T_CHAR, T_NUM, T_STR, T_IDENT, T_QUOTE } from './const'
+import { depIds, stdproc, env } from './dep'
 
 let context = null
 
 const JS_CALL_PRE = `(function(){`
 const JS_CALL_SUF = `})()`
 const ERR_UNBALANCED_PAREN = `Expected a \\\`)\\\` to close \\\`(\\\``
+
+const STD_PROC = depIds.get(stdproc)
+const ENV = depIds.get(env)
 
 function transBool (token:SchemeToken, idx:number) : SchemeTransResult {
     const ll = token.lex.toLowerCase()
