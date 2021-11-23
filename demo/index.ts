@@ -43,8 +43,9 @@ window.onload = function () {
                         })
                     }
 
-                    // evaluate
-                    const { res, err } = Compiler.evaluate(js)
+                    // link & evaluate
+                    const exe = Compiler.link(js)
+                    const { res, err } = exe()
                     const display:any[] = res
                         .filter((r) => r !== undefined)
                         .map((r) => escape(r))
