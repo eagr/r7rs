@@ -187,83 +187,6 @@ const scanId:SchemeScanner = function (src, idx) {
     if (matches) return [{ type: T_IDENT, lex: matches[0], idx: idx }, null]
 }
 
-const scanQuote:SchemeScanner = function (src, idx) {
-    const rem = src.substring(idx)
-
-    if (rem[0] === `'` || /^\(\s*quote/.test(rem)) {
-        const ws = /\s/
-        const shorthand = rem[0] === `'`
-        let out = shorthand ? `'` : rem.match(/^(\(\s*quote)/)[1]
-
-        let open = -1
-        const openInit = shorthand ? 0 : 1
-
-        let empty = true
-        let complete = false
-        let lastOpen = idx
-
-        let head = out.length
-        while (head < rem.length && !complete) {
-            if (open < 0) open = openInit
-            const ch = rem[head]
-            const last = out[out.length - 1]
-
-            const top = open === openInit
-            if (!shorthand) {
-                if (top && !empty && !ws.test(ch) && ch !== ')' && ws.test(last)) {
-                    return [null, {
-                        idx: head,
-                        desc: 'Invalid quote',
-                    }]
-                }
-            }
-
-            if (shorthand && top && !empty) {
-                complete = ws.test(ch)
-                if (complete) break
-            }
-
-            if (ch === '(') {
-                lastOpen = head
-                ++open
-            } else if (ch === ')') {
-                --open
-            }
-            if (open < 0) {
-                return [null, {
-                    idx: head,
-                    desc: 'Unexpected `)`',
-                }]
-            }
-            if (open === 0) {
-                out += ch
-                break
-            }
-
-            if (empty && !ws.test(ch) && ch !== ')' && ch !== `'`) {
-                empty = false
-            }
-
-            out += ch
-            ++head
-        }
-
-        if (open > 0) {
-            return [null, {
-                idx: lastOpen,
-                desc: 'Expected a `)` to close `(`',
-            }]
-        }
-        if (empty) {
-            return [null, {
-                idx: lastOpen,
-                desc: 'Empty quote is invalid',
-            }]
-        }
-        return [{ type: T_QUOTE, lex: out, idx: idx }, null]
-    }
-}
-
 const scanSpecial:SchemeScanner = function (src, idx) {
     const sp = src[idx]
     if (sp === `'` || sp === '`' || sp === '.') {
@@ -273,7 +196,6 @@ const scanSpecial:SchemeScanner = function (src, idx) {
 
 // order matters
 const scanners:SchemeScanner[] = [
-    scanQuote,
     scanDelimiter,
     scanStr,
     scanBool,

@@ -522,57 +522,12 @@ const transIf:SchemeTranspiler = function (tokens, idx) {
     }
 }
 
-const transQuote:SchemeTranspiler = function (tokens, idx) {
-    const token = tokens[idx]
-    const { type, lex } = token
-    if (type !== T_QUOTE) {
-        return [null, {
-            idx: token.idx,
-            desc: `Expected a quote, but got \\\`${lex}\\\``,
-        }]
-    }
-
-    const ws = /\s/
-    let out = `'`
-    const shorthand = lex[0] === `'`
-    let head = shorthand ? 1 : lex.match(/^(\(\s*quote)/)[1].length
-    while (head < lex.length) {
-        const ch = lex[head]
-        const last = out[out.length - 1]
-        if (ws.test(ch)) {
-            if (last !== '(' && last !== ' ' && last !== `'`) {
-                out += ' '
-            }
-        } else if (ch === '(') {
-            out += (last === '(' || last === ' ' || last === `'`)
-                ? ch
-                : ' ' + ch
-        } else if (ch === ')') {
-            if (last === ' ') {
-                out = out.trim() + ch
-            } else {
-                out += ch
-            }
-        } else {
-            out += last === ')'
-                ? ' ' + ch
-                : ch
-        }
-        ++head
-    }
-    if (!shorthand) { out = out.substring(0, out.length - 1) }
-
-    return [{ js: '`' + out + '`', next: idx + 1 }, null]
-}
-
 const stdform = {
     'define':   transDefine,
     'lambda':   transLambda,
     'let':      transLet,
 
     'if':       transIf,
-
-    'quote':    transQuote,
 }
 
 // ------ end standard forms ------
@@ -650,8 +605,6 @@ function trans (tokens:SchemeToken[], idx:number) : SchemeTransResult {
             idx: token.idx,
             desc: `Unexpected \\\`)\\\``,
         }]
-    } else if (type === T_QUOTE) {
-        return transQuote(tokens, idx)
     } else {
         return transPrimitive(tokens, idx)
     }
