@@ -183,7 +183,7 @@ const transNewIdent = (token:SchemeToken, idx:number) : SchemeTransResult => {
     return [{ js: context.jsId(lex), next: idx + 1}, null]
 }
 
-const transPrimitive:SchemeTranspiler = function (tokens, idx) {
+const transAtom:SchemeTranspiler = function (tokens, idx) {
     const token = tokens[idx]
     switch (token.type) {
         case T_BOOL: return transBool(token, idx)
@@ -561,7 +561,7 @@ const transCall = function (tokens:SchemeToken[], idx:number, namespace='') : Sc
     }
 }
 
-const transCombination:SchemeTranspiler = function (tokens, idx) {
+const transComb:SchemeTranspiler = function (tokens, idx) {
     if (idx >= tokens.length - 1) {
         return [null, {
             idx: tokens[idx].idx,
@@ -599,14 +599,14 @@ function trans (tokens:SchemeToken[], idx:number) : SchemeTransResult {
     const token = tokens[idx]
     const { type, lex } = token
     if (lex === '(') {
-        return transCombination(tokens, idx)
+        return transComb(tokens, idx)
     } else if (lex === ')') {
         return [null, {
             idx: token.idx,
             desc: `Unexpected \\\`)\\\``,
         }]
     } else {
-        return transPrimitive(tokens, idx)
+        return transAtom(tokens, idx)
     }
 }
 
